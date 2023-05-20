@@ -19,6 +19,7 @@ output_height = int(args.output_height)
 img = cv2.imread('sample_image.jpg')
 img2 = img.copy()
 WINDOW_NAME = 'Preview Window'
+WINDOW_NAME_WARPED = 'Your warped Image. Press "s"- Key to save your wonderful creation.'
 
 
 cv2.namedWindow(WINDOW_NAME)
@@ -53,7 +54,7 @@ def mouse_callback(event, x, y, flags, param):
             if len(points) == 4:
                 mouse_active = False
                 img_warped = warp(img, output_width, output_height)
-                cv2.imshow(WINDOW_NAME, img_warped)
+                cv2.imshow(WINDOW_NAME_WARPED, img_warped)
                 save(img_warped)
                 points = []
 

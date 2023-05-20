@@ -16,7 +16,7 @@ output_file = os.path.normpath(args.output_file)
 output_width = int(args.output_width)
 output_height = int(args.output_height)
 
-img = cv2.imread('sample_image.jpg')
+img = cv2.imread(input_file)
 img2 = img.copy()
 WINDOW_NAME = 'Preview Window'
 WINDOW_NAME_WARPED = 'Your warped Image. Press "s"- Key to save your wonderful creation.'

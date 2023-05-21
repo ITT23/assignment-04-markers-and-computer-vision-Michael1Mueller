@@ -59,6 +59,11 @@ def mouse_callback(event, x, y, flags, param):
                 points = []
 
 
+def check_window_exists(window_name):
+    prop = cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE)
+    return prop >= 0
+
+
 def save(img_warped):
     # Check for "s"-key
     if cv2.waitKey(0) == ord('s'):
@@ -71,14 +76,19 @@ cv2.imshow(WINDOW_NAME, img)
 
 while True:
     # Check for ESC-key
-    if cv2.waitKey(1) == 27:
+    key = cv2.waitKey(1) & 0xFF  # Maske für die niedrigsten 8 Bits
+
+    # Check for ESC-key
+    if key == 27:
         img2 = img.copy()
         cv2.imshow(WINDOW_NAME, img2)
         points = []
         mouse_active = True
 
-    if cv2.waitKey(1) == ord('q'):
+    if key == ord('q'):
         break
 
+    else:
+        pass
 cv2.destroyAllWindows()
 

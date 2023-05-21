@@ -14,6 +14,7 @@ video_id = 0
 points = []
 fingertip = None
 score = 0
+lives = 3
 
 # image from https://www.svgrepo.com/svg/321919/bug-net?edit=true
 net_path = os.path.normpath("./bugnet.png")
@@ -45,6 +46,9 @@ batch = pyglet.graphics.Batch()
 
 score_box = pyglet.shapes.Rectangle(0, WINDOW_HEIGHT-50, 100, 50, color=(200, 200, 200), batch=batch)
 score_label = pyglet.text.Label(text=f"Score: {score}", x=10, y=WINDOW_HEIGHT-30, batch=batch)
+
+end_label = pyglet.text.Label(text=f"Your Score: {score} press 'r' to restart or 'q' to exit", x=WINDOW_WIDTH/4,
+                              y=WINDOW_HEIGHT/2)
 
 
 # converts OpenCV image to PIL image and then to pyglet texture
@@ -153,9 +157,11 @@ class Enemy:
                     score_label.text = f"Score: {score}"
 
     def out_of_bounds():
+        global lives
         for enemy in Enemy.enemies:
             if enemy.x < 0:
                 enemy.delete_enemy()
+                lives -= 1
 
 
 def spawn_enemies():
@@ -232,28 +238,43 @@ def get_finger(frame):
         Enemy.collision_detection(fingertip)
 
 
+# from exercise sheet 2
+@window.event
+def on_key_press(symbol, modifiers):
+    global lives
+    global score
+    if symbol == pyglet.window.key.Q:
+        window.close()
+    if symbol == pyglet.window.key.R:
+        lives = 3
+        Enemy.enemies = []
+        score = 0
+        score_label.text = f"Score: {score}"
+
+
 @window.event
 def on_draw():
+    global lives
     window.clear()
-    ret, frame = cap.read()
+    if lives > 0:
+        ret, frame = cap.read()
 
-    # warp frame for "game"-view
-    warped_frame = detect_markers(frame)
-    if warped_frame is not None:
-        # if game view -> spawn, update.. butterflies
-        spawn_enemies()
-        frame = warped_frame
-        Enemy.update_enemies()
-        Enemy.out_of_bounds()
-        get_finger(frame)
+        # warp frame for "game"-view
+        warped_frame = detect_markers(frame)
+        if warped_frame is not None:
+            # if game view -> spawn, update.. butterflies
+            spawn_enemies()
+            frame = warped_frame
+            Enemy.update_enemies()
+            Enemy.out_of_bounds()
+            get_finger(frame)
 
-    img = cv2glet(frame, 'BGR')
-    img.blit(0, 0, 0)
+        img = cv2glet(frame, 'BGR')
+        img.blit(0, 0, 0)
 
-    batch.draw()
-    # Wait for a key press and check if it's the 'q' key | from example
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        cv2.destroyAllWindows()
+        batch.draw()
+    else:
+        end_label.draw()
 
 
 pyglet.app.run()

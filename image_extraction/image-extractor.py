@@ -76,7 +76,7 @@ cv2.imshow(WINDOW_NAME, img)
 
 while True:
     # Check for ESC-key
-    key = cv2.waitKey(1) & 0xFF  # Maske für die niedrigsten 8 Bits
+    key = cv2.waitKey(1) & 0xFF
 
     # Check for ESC-key
     if key == 27:
